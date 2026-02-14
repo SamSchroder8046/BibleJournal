@@ -78,11 +78,6 @@ RADIO;
     </div>
 CONTENT;
 
-//    $content .= "<h1>Bible Journal</h1><h2 id='subHeader'>Languages:</h2><ul id='displayList'>";
-//    foreach ($languages as $language) {
-//        $content .= "<li data_content_type='language' attr_language='$language' class='language-item' >$language</li>";
-//    }
-//    $content.="</ul>";
     $configData = json_encode(file_get_contents('../data/config.json'));
     $content .= "<script>bibleData = $jsonData;</script>";
     $content .= "<script>config = $configData;</script>";
