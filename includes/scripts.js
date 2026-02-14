@@ -1,5 +1,10 @@
 // console.log("script loaded");
 
+function updateConfig(key, value) {
+    config[key] = value.toString();
+    return config;
+}
+
 function getVersionsByLanguage(language, jsonData) {
     let versions = [];
     for (const version of jsonData) {
@@ -7,6 +12,8 @@ function getVersionsByLanguage(language, jsonData) {
             versions.push(version);
         }
     }
+    const newConfig = updateConfig("language", language);
+    console.log(newConfig.toString())
     return versions;
 }
 
