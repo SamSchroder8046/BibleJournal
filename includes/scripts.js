@@ -26,7 +26,7 @@ function filterVersionRadioButtons (language = "") {
             inputEl.type = "radio";
             inputEl.id = versionName;
             inputEl.name = "bible-version";
-            inputEl.value = versionName;
+            inputEl.value = version["id"];
             inputEl.required = true;
 
             // create label element

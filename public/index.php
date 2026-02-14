@@ -2,10 +2,16 @@
 include "../includes/head.php";
 include "../includes/body.php";
 
-function getBibleData() {
+function getBibleConfigData() {
     $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json");
     $data = json_decode($response, true);
 //    echo print_r($data);
+    return $data;
+}
+
+function getBibleData($id, $book, $chapter) {
+    $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/{$id}/books/{$book}/chapters/{$chapter}.json");
+    $data = json_decode($response, true);
     return $data;
 }
 
@@ -29,7 +35,7 @@ function organiseData($data)
     return $dataObject;
 }
 
-function buildContent($organisedData) {
+function buildFormContent($organisedData) {
     $jsonData = json_encode($organisedData[0]);
     $versions = $organisedData[1];
     $languages = $organisedData[2];
@@ -44,17 +50,17 @@ OPTION;
     $versionRadios = "";
     foreach ($versions as $version) {
         $versionName = $version['version'];
-        $versionRadios .= <<<RADIO
-    <div class="version-container" id="$versionName-container">
-        <input class="version-radio-button" type="radio" id="$versionName" name="bible-version" value="$versionName" required>
-        <label class="version-label" for="$versionName">$versionName</label><br>
-    </div>
-RADIO;
+//        $versionRadios .= <<<RADIO
+//    <div class="version-container" id="$versionName-container">
+//        <input class="version-radio-button" type="radio" id="$versionName" name="bible-version" value="$versionName" required>
+//        <label class="version-label" for="$versionName">$versionName</label><br>
+//    </div>
+//RADIO;
     }
     $content = <<<CONTENT
     <div class="form-container">
         <h2>Configure your Bible</h2>
-        <form class="form" action="index.php">
+        <form class="form" action="index.php" method="post">
             <h3>Enter your name</h3>
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" default="user"><br>
@@ -82,15 +88,32 @@ CONTENT;
     return $content;
 }
 
+function buildAppContent($version, $book="genesis", $chapter="1") {
+    $data = getBibleData($version, $book, $chapter);
+//    echo print_r($data);
+    $content = "<div id='bible-container'>";
+    foreach ($data["data"] as $verseData) {
+        $verse = $verseData["verse"];
+        $verseContent = $verseData["text"];
+        $content .= "<a class='verse' id='$book-$chapter-$verse'>$verseContent</a>";
+    }
+    $content .= "</div>";
+    return $content;
+}
+
 function displayContent($content) {
     echo getHead();
     echo getBody($content);
 }
 
 function main () {
-    $data = getBibleData();
+    $data = getBibleConfigData();
     $organisedData = organiseData($data);
-    $content = buildContent($organisedData);
+    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+        $content = buildFormContent($organisedData);
+    } else {
+        $content = buildAppContent($_POST["bible-version"]);
+    }
     displayContent($content);
 }
 
