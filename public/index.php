@@ -1,5 +1,5 @@
 <?php
-include "../includes/header.php";
+include "../includes/head.php";
 include "../includes/body.php";
 
 function getBibleData() {
@@ -30,6 +30,15 @@ function organiseData($data) {
 function buildContent($organisedData) {
     $jsonData = json_encode($organisedData[0]);
     $languages = $organisedData[2];
+    $content = <<<CONTENT
+<form>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name"><br>
+    <label for="language">Language:</label>
+    <<input type="text">
+</form>
+CONTENT;
+
     $content = "<h1>Bible Journal</h1><h2 id='subHeader'>Languages:</h2><ul id='displayList'>";
     foreach ($languages as $language) {
         $content .= "<li data_content_type='language' attr_language='$language' class='language-item' >$language</li>";
@@ -42,7 +51,7 @@ function buildContent($organisedData) {
 }
 
 function displayContent($content) {
-    echo getHeader();
+    echo getHead();
     echo getBody($content);
 }
 
