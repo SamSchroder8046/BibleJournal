@@ -41,22 +41,25 @@ function buildFormContent($organisedData) {
     $languages = $organisedData[2];
     $languageOptions = "";
     $defaultLanguage = "English";
-    foreach ($languages as $language) {
-        if ($language === $defaultLanguage) {$defaultSelected = " selected";} else {$defaultSelected = "";}
-        $languageOptions .= <<<OPTION
-    <option value="$language"$defaultSelected>$language</option>
+    $languageOptions .= <<<OPTION
+    <option value="English" selected>English</option>
 OPTION;
-    }
-    $versionRadios = "";
-    foreach ($versions as $version) {
-        $versionName = $version['version'];
+//    foreach ($languages as $language) {
+//        if ($language === $defaultLanguage) {$defaultSelected = " selected";} else {$defaultSelected = "";}
+//        $languageOptions .= <<<OPTION
+//    <option value
+
+//    }
+//    $versionRadios = "";
+//    foreach ($versions as $version) {
+//        $versionName = $version['version'];
 //        $versionRadios .= <<<RADIO
 //    <div class="version-container" id="$versionName-container">
 //        <input class="version-radio-button" type="radio" id="$versionName" name="bible-version" value="$versionName" required>
 //        <label class="version-label" for="$versionName">$versionName</label><br>
 //    </div>
 //RADIO;
-    }
+//    }
     $content = <<<CONTENT
     <div class="form-container">
         <h2>Configure your Bible</h2>
@@ -109,7 +112,7 @@ function displayContent($content) {
 function main () {
     $data = getBibleConfigData();
     $organisedData = organiseData($data);
-    if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $content = buildFormContent($organisedData);
     } else {
         $content = buildAppContent($_POST["bible-version"]);

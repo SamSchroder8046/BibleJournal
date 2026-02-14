@@ -32,3 +32,21 @@ body {
     justify-content: end;
     width: 100%;
 }
+
+#bible-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    margin: 0 auto;
+}
+
+.verse {
+    text-align: center;
+    margin: 10px;
+}
+
+.verse:hover {
+    text-decoration: underline;
+    text-decoration-color: blue;
+}
