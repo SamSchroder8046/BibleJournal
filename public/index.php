@@ -1,6 +1,7 @@
 <?php
 include "../includes/head.php";
 include "../includes/body.php";
+include "../includes/header.php";
 
 function getBibleConfigData() {
     $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json");
@@ -98,7 +99,12 @@ function buildAppContent($version, $book="genesis", $chapter="1") {
     foreach ($data["data"] as $verseData) {
         $verse = $verseData["verse"];
         $verseContent = $verseData["text"];
-        $content .= "<a class='verse' id='$book-$chapter-$verse'>$verseContent</a>";
+        if ($verse % 2 == 0) {
+            $background = 'style="background-color: azure"';
+        } else {
+            $background = 'style="background-color: white"';
+        }
+        $content .= "<div class='verse-container' $background><p class='verse-number' id='v$verse'>v$verse.</p><a class='verse' id='$book-$chapter-$verse'>$verseContent</a></div>";
     }
     $content .= "</div>";
     return $content;
@@ -115,7 +121,8 @@ function main () {
     if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $content = buildFormContent($organisedData);
     } else {
-        $content = buildAppContent($_POST["bible-version"]);
+        $content = getHeader();
+        $content .= buildAppContent($_POST["bible-version"]);
     }
     displayContent($content);
 }
