@@ -7,8 +7,8 @@ function filterVersionRadioButtons (language = "") {
     bibleData.sort((a, b) => {
         let x = a["version"].toLowerCase();
         let y = b["version"].toLowerCase();
-        if (x < y) {return -1};
-        if (x > y) {return 1};
+        if (x < y) {return -1;}
+        if (x > y) {return 1;}
         return 0;
     });
 
@@ -47,12 +47,9 @@ function filterVersionRadioButtons (language = "") {
     }
 }
 
-languageRadioButtons = document.getElementsByClassName("language-radio-button")
-versionLabels = document.getElementsByClassName("version-label");
-console.log(languageRadioButtons);
-for (const radioButton of languageRadioButtons) {
-    radioButton.addEventListener("click", (element) => {
-        filterVersionRadioButtons(element.target.getAttribute("value"));
-
-    });
-}
+const languageSelector = document.getElementById("language");
+filterVersionRadioButtons(languageSelector ? languageSelector.value : "");
+languageSelector.addEventListener("input", (event) => {
+    console.log("Language changed");
+    filterVersionRadioButtons(event.target.value);
+});

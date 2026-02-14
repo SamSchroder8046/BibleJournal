@@ -9,7 +9,8 @@ function getBibleData() {
     return $data;
 }
 
-function organiseData($data) {
+function organiseData($data)
+{
     $versions = [];
     foreach ($data as $version) {
         array_push($versions, $version);
@@ -28,22 +29,17 @@ function organiseData($data) {
     return $dataObject;
 }
 
-function updateVersions() {
-
-}
-
 function buildContent($organisedData) {
     $jsonData = json_encode($organisedData[0]);
     $versions = $organisedData[1];
     $languages = $organisedData[2];
-    $languageRadios = "";
+    $languageOptions = "";
+    $defaultLanguage = "English";
     foreach ($languages as $language) {
-        $languageRadios .= <<<RADIO
-    <div class="language-container" id="$language-container">
-        <input class="language-radio-button" type="radio" id="$language" name="bible-language" value="$language" required>
-        <label class="language-label" for="$language">$language</label><br>
-    </div>
-RADIO;
+        if ($language === $defaultLanguage) {$defaultSelected = " selected";} else {$defaultSelected = "";}
+        $languageOptions .= <<<OPTION
+    <option value="$language"$defaultSelected>$language</option>
+OPTION;
     }
     $versionRadios = "";
     foreach ($versions as $version) {
@@ -61,14 +57,16 @@ RADIO;
         <form class="form" action="index.php">
             <h3>Enter your name</h3>
             <label for="name">Name:</label>
-            <input type="text" id="name" name="name"><br>
+            <input type="text" id="name" name="name" default="user"><br>
             <h3>Choose your language</h3>
-            <div id="language-radio-container">
-                $languageRadios
+            <div id="language-select-container">
+                <label for="language">Language:</label>
+                <select id="language" name="language">
+                    $languageOptions
+                </select>
             </div>
             <h3>Choose your version</h3>
             <div id="version-radio-container">
-<!--                $versionRadios-->
             </div>
             <br>
             <div class="submit-button-container">
