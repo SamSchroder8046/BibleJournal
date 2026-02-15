@@ -47,9 +47,16 @@ function filterVersionRadioButtons (language = "") {
     }
 }
 
+// implement filtering for bible versions by language with event listener
 const languageSelector = document.getElementById("language");
 filterVersionRadioButtons(languageSelector ? languageSelector.value : "");
 languageSelector.addEventListener("input", (event) => {
     console.log("Language changed");
     filterVersionRadioButtons(event.target.value);
 });
+
+// nav dropdown
+const header = document.getElementById("header");
+const dropdownButton = document.getElementById("nav-dropdown");
+
+const navTable = document.createElement("table");

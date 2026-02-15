@@ -1,9 +1,9 @@
 <?php
 function getHeader(){
     $header = <<<HEADER
-        <header>
+        <header id="header">
             <div id="header-container">
-                <img src="../public/assets/images/arrow-down.svg">
+                <img id="nav-dropdown" src="../public/assets/images/arrow-down.svg">
             </div>
         </header>
 HEADER;

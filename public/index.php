@@ -2,40 +2,9 @@
 include "../includes/head.php";
 include "../includes/body.php";
 include "../includes/header.php";
+include "../includes/bibleDataHelper.php";
 
-function getBibleConfigData() {
-    $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json");
-    $data = json_decode($response, true);
-//    echo print_r($data);
-    return $data;
-}
-
-function getBibleData($id, $book, $chapter) {
-    $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/{$id}/books/{$book}/chapters/{$chapter}.json");
-    $data = json_decode($response, true);
-    return $data;
-}
-
-function organiseData($data)
-{
-    $versions = [];
-    foreach ($data as $version) {
-        array_push($versions, $version);
-    }
-    asort($versions);
-
-    $languages = [];
-    foreach ($data as $version) {
-        $language = $version['language']['name'];
-        if (!in_array($language, $languages)) {
-            array_push($languages, $language);
-        }
-    }
-    asort($languages);
-    $dataObject = [$data, $versions, $languages];
-    return $dataObject;
-}
-
+$bibleJSON = new BibleJSONData();
 function buildFormContent($organisedData) {
     $jsonData = json_encode($organisedData[0]);
     $versions = $organisedData[1];
@@ -92,8 +61,9 @@ CONTENT;
     return $content;
 }
 
-function buildAppContent($version, $book="genesis", $chapter="1") {
-    $data = getBibleData($version, $book, $chapter);
+function buildAppContent($version, $bibleJSONObject, $book="genesis", $chapter="2") {
+    $data = getBibleChapterData($version, $book, $chapter);
+    storeBibleChapterData($data, $bibleJSONObject);
 //    echo print_r($data);
     $content = "<div id='bible-container'>";
     foreach ($data["data"] as $verseData) {
@@ -115,17 +85,17 @@ function displayContent($content) {
     echo getBody($content);
 }
 
-function main () {
+function main ($bibleJSONObject) {
     $data = getBibleConfigData();
-    $organisedData = organiseData($data);
+    $organisedData = organiseConfigData($data);
     if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $content = buildFormContent($organisedData);
     } else {
         $content = getHeader();
-        $content .= buildAppContent($_POST["bible-version"]);
+        $content .= buildAppContent($_POST["bible-version"], $bibleJSONObject);
     }
     displayContent($content);
 }
 
-main();
+main($bibleJSON);
 ?>
