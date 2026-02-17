@@ -119,7 +119,7 @@ function getBibleChapterData($id, $book, $chapter) {
 function storeBibleChapterData($data, $bibleJSONObj) {
     $bibleJSONObj->storeChapterData($data);
 //    $bibleJSONObj->echoJSON();
-    file_put_contents("../data/bible.json", $bibleJSONObj->getCurrentJSON());
+    file_put_contents("./data/bible.json", $bibleJSONObj->getCurrentJSON());
 }
 
 function organiseConfigData($data)
