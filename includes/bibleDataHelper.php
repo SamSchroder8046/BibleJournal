@@ -99,8 +99,14 @@ class BibleJSONData
 
 function getBibleConfigData() {
     $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/bibles.json");
+    if ($response === false) { echo "<h1>Could not get Bible data</h1>"; return null; }
     $data = json_decode($response, true);
-//    echo print_r($data);
+    foreach($data as $version) {// delete me
+        if ($version['language']['name'] === "English") {
+            echo print_r($version);
+            echo "<br>";
+        }
+    }
     return $data;
 }
 

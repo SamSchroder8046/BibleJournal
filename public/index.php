@@ -69,7 +69,14 @@ function buildAppContent($version, $bibleJSONObject, $book="genesis", $chapter="
     foreach ($data["data"] as $verseData) {
         $verse = $verseData["verse"];
         $verseContent = $verseData["text"];
-        if ($verse % 2 == 0) {
+        $verseStr = trim((string) $verse);
+        if (ctype_digit($verseStr)) {
+            $verseNum = (int) $verseStr;
+            $isEven = ($verseNum % 2 == 0);
+        } else {
+            $isEven = false;
+        }
+        if ($isEven) {
             $background = 'style="background-color: azure"';
         } else {
             $background = 'style="background-color: white"';

@@ -2,6 +2,7 @@
 
 // hide irrelevant Bible versions when language selected
 function filterVersionRadioButtons (language = "") {
+    const excludedVersionIds = ["en-US-asvbt", "en-US-emtv", "en-US-f35", "en-tcent"];
     const versionRadioContainer = document.getElementById("version-radio-container");
     versionRadioContainer.innerHTML = "";
     bibleData.sort((a, b) => {
@@ -13,7 +14,7 @@ function filterVersionRadioButtons (language = "") {
     });
 
     for (const version of bibleData) {
-        if (language === "" || version["language"]["name"] === language) {
+        if (language === "" || version["language"]["name"] === language && !excludedVersionIds.includes(version["id"])) {
             // create version container
             const versionContainer = document.createElement("div");
             versionContainer.className = "version-container";
