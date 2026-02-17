@@ -1,8 +1,8 @@
 <?php
-include "./includes/head.php";
-include "./includes/body.php";
-include "./includes/header.php";
-include "./includes/bibleDataHelper.php";
+include "../includes/head.php";
+include "../includes/body.php";
+include "../includes/header.php";
+include "../includes/bibleDataHelper.php";
 
 $bibleJSON = new BibleJSONData();
 function buildFormContent($organisedData) {
@@ -55,7 +55,7 @@ OPTION;
     </div>
 CONTENT;
 
-    $configData = json_encode(file_get_contents('./data/config.json'));
+    $configData = json_encode(file_get_contents('../data/config.json'));
     $content .= "<script>bibleData = $jsonData;</script>";
     $content .= "<script>config = $configData;</script>";
     return $content;
