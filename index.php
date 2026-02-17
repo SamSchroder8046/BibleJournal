@@ -93,9 +93,9 @@ function displayContent($content) {
 }
 
 function main ($bibleJSONObject) {
-    $data = getBibleConfigData();
-    $organisedData = organiseConfigData($data);
     if ($_SERVER["REQUEST_METHOD"] === "GET") {
+        $data = getBibleConfigData();
+        $organisedData = organiseConfigData($data);
         $content = buildFormContent($organisedData);
     } else {
         $content = getHeader();
