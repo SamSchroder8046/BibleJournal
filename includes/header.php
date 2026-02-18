@@ -32,10 +32,10 @@ BUTTON;
     $header = <<<HEADER
         <header id="header">
             <div id="header-container">
-                <img id="nav-dropdown" src="./public/assets/images/arrow-down.svg">
                 <table id="nav-table">
                     $tableContent
                 </table>
+                <img id="nav-dropdown" src="./public/assets/images/arrow-down.svg">
             </div>
         </header>
 HEADER;

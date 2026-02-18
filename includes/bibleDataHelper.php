@@ -155,9 +155,27 @@ function getBibleConfigData() {
     return $data;
 }
 
+// WARNING: this function uses cURL if available. You may need to enable cURL in your php.ini file.
 function getBibleChapterData($id, $book, $chapter) {
-    $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/{$id}/books/{$book}/chapters/{$chapter}.json");
-    if (!$response) { return false; }
+    $url = "https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/{$id}/books/{$book}/chapters/{$chapter}.json";
+
+    // prefer cURL if available
+    if (function_exists("curl_init")) {
+        // create a new cURL resource
+        $ch = curl_init($url);
+        // set CURLOPT_RETURNTRANSFER to true to get a response body
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($response === false || $http_code !== 200) { return false; }
+        $data = json_decode($response, true);
+        return $data;
+    }
+
+    // fallback to file_get_contents
+    $response = file_get_contents($url);
+    if ($response === false) { return false; }
     $data = json_decode($response, true);
     return $data;
 }

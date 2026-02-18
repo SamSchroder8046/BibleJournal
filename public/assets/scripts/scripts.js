@@ -74,10 +74,19 @@ document.addEventListener("DOMContentLoaded", () => {
         bibleContainer.style.paddingTop = headerContainer.offsetHeight + "px";
     }
 
+    let currentRotation = 0;
+    function rotateDropDownButton() {
+        if (dropDownButton) {
+            currentRotation += 180;
+            dropDownButton.style.transform = `rotate(${currentRotation}deg)`;
+        }
+    }
+
     function listenForNavDropdownClick() {
         if (dropDownButton && headerContainer) {
             dropDownButton.addEventListener("click", () => {
                 headerContainer.classList.toggle("open");
+                rotateDropDownButton();
                 // change bible content offset to account for nav dropdown
                 setTimeout(syncBibleOffsetWithHeader, 0);
             });
