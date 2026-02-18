@@ -1,100 +1,145 @@
 <?php
-class BibleJSONData
-{
-    public $books = [];
-    private $booksOfTheBible = [
+//class BibleJSONData
+//{
+//    public $books = [];
+//
+//    // stores chapter api data as json in books attribute
+//    public function storeChapterData($dataInput) {
+//        $data = $dataInput["data"];
+//        $book = $data[0]["book"];
+//        $chapter = $data[0]["chapter"];
+//        if (!isset($this->books[$book])) {
+//            $this->books[$book] = $data;
+//        } elseif (!isset($this->books[$book][$chapter])) {
+//            $this->books[$book][$chapter] = $data;
+//        }
+//    }
+//
+//    public function getJSON() {
+//        return json_encode($this->books);
+//    }
+//
+//    public function echoJSON() {
+//        echo $this->getJSON();
+//    }
+//}
 
-        // Old Testament
-        "genesis",
-        "exodus",
-        "leviticus",
-        "numbers",
-        "deuteronomy",
-        "joshua",
-        "judges",
-        "ruth",
-        "1samuel",
-        "2samuel",
-        "1kings",
-        "2kings",
-        "1chronicles",
-        "2chronicles",
-        "ezra",
-        "nehemiah",
-        "esther",
-        "job",
-        "psalms",
-        "proverbs",
-        "ecclesiastes",
-        "songofsolomon",
-        "isaiah",
-        "jeremiah",
-        "lamentations",
-        "ezekiel",
-        "daniel",
-        "hosea",
-        "joel",
-        "amos",
-        "obadiah",
-        "jonah",
-        "micah",
-        "nahum",
-        "habakkuk",
-        "zephaniah",
-        "haggai",
-        "zechariah",
-        "malachi",
+$booksOfTheBible = [
 
-        // New Testament
-        "matthew",
-        "mark",
-        "luke",
-        "john",
-        "acts",
-        "romans",
-        "1corinthians",
-        "2corinthians",
-        "galatians",
-        "ephesians",
-        "philippians",
-        "colossians",
-        "1thessalonians",
-        "2thessalonians",
-        "1timothy",
-        "2timothy",
-        "titus",
-        "philemon",
-        "hebrews",
-        "james",
-        "1peter",
-        "2peter",
-        "1john",
-        "2john",
-        "3john",
-        "jude",
-        "revelation"
+    // Old Testament
+    "genesis",
+    "exodus",
+    "leviticus",
+    "numbers",
+    "deuteronomy",
+    "joshua",
+    "judges",
+    "ruth",
+    "1samuel",
+    "2samuel",
+    "1kings",
+    "2kings",
+    "1chronicles",
+    "2chronicles",
+    "ezra",
+    "nehemiah",
+    "esther",
+    "job",
+    "psalms",
+    "proverbs",
+    "ecclesiastes",
+    "songofsolomon",
+    "isaiah",
+    "jeremiah",
+    "lamentations",
+    "ezekiel",
+    "daniel",
+    "hosea",
+    "joel",
+    "amos",
+    "obadiah",
+    "jonah",
+    "micah",
+    "nahum",
+    "habakkuk",
+    "zephaniah",
+    "haggai",
+    "zechariah",
+    "malachi",
 
-    ];
+    // New Testament
+    "matthew",
+    "mark",
+    "luke",
+    "john",
+    "acts",
+    "romans",
+    "1corinthians",
+    "2corinthians",
+    "galatians",
+    "ephesians",
+    "philippians",
+    "colossians",
+    "1thessalonians",
+    "2thessalonians",
+    "1timothy",
+    "2timothy",
+    "titus",
+    "philemon",
+    "hebrews",
+    "james",
+    "1peter",
+    "2peter",
+    "1john",
+    "2john",
+    "3john",
+    "jude",
+    "revelation"
 
-    // stores chapter api data as json in books attribute
-    public function storeChapterData($dataInput) {
-        $data = $dataInput["data"];
-        $book = $data[0]["book"];
-        $chapter = $data[0]["chapter"];
-        if (!isset($this->books[$book])) {
-            $this->books[$book] = $data;
-        } elseif (!isset($this->books[$book][$chapter])) {
-            $this->books[$book][$chapter] = $data;
-        }
+];
+
+// creates a unique key for each chapter
+function cacheKey($version, $book, $chapter) {
+    return sha1($version . "|" . $book . "|" . $chapter);
+}
+
+// creates path for the cached bible chapter file to be saved
+function createCachePath($key) {
+    return __DIR__ . "/../data/cache/" . $key . ".json";
+}
+
+// returns decoded json data from the specified cache file
+function getCachedChapter($version, $book, $chapter) {
+    $key = cacheKey($version, $book, $chapter);
+    $path = createCachePath($key);
+    if (!is_file($path)) {
+        return false;
     }
 
-    public function getCurrentJSON() {
-        return json_encode($this->books);
-    }
+    $raw = file_get_contents($path);
+    $decoded = json_decode($raw, true);
 
-    public function echoJSON() {
-        echo $this->getCurrentJSON();
+    if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) { return false; }
+}
+
+// writes the json data to the cache file
+function putCachedChapter($version, $book, $chapter, $json) {
+    if (!is_string($json) || trim($json) === "" || trim($json) === "null") { return false; }
+    $key = cacheKey($version, $book, $chapter);
+    $path = createCachePath($key);
+    $file = fopen($path, "c");
+    if ($file === false) { return false; }
+
+    // lock the file and if successful clear the file and write the json data
+    if (flock($file, LOCK_EX)) {
+        ftruncate($file, 0);
+        fwrite($file, $json);
+        fflush($file);
+        flock($file, LOCK_UN);
     }
+    fclose($file);
+    return true;
+
 }
 
 function getBibleConfigData() {
@@ -103,8 +148,8 @@ function getBibleConfigData() {
     $data = json_decode($response, true);
     foreach($data as $version) {// delete me
         if ($version['language']['name'] === "English") {
-            echo print_r($version);
-            echo "<br>";
+            echo print_r($version); // delete me
+            echo "<br>"; // delete me
         }
     }
     return $data;
@@ -112,14 +157,18 @@ function getBibleConfigData() {
 
 function getBibleChapterData($id, $book, $chapter) {
     $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/{$id}/books/{$book}/chapters/{$chapter}.json");
+    if (!$response) { return false; }
     $data = json_decode($response, true);
     return $data;
 }
 
-function storeBibleChapterData($data, $bibleJSONObj) {
-    $bibleJSONObj->storeChapterData($data);
-//    $bibleJSONObj->echoJSON();
-    file_put_contents("./data/bible.json", $bibleJSONObj->getCurrentJSON());
+//function getBibleChapterJSON($id, $book, $chapter) {
+//    $response = file_get_contents("https://cdn.jsdelivr.net/gh/wldeh/bible-api/bibles/{$id}/books/{$book}/chapters/{$chapter}.json");
+//    return $response;
+//}
+
+function storeBibleChapterData($data) {
+    putCachedChapter($data["version"], $data["book"], $data["chapter"], json_encode($data));
 }
 
 function organiseConfigData($data)

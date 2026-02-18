@@ -1,10 +1,13 @@
 <?php
+session_start();
+
+$_SESSION["bible_version"] = isset($_POST['bible-version']) ? (string) $_POST['bible-version'] : "en-US-kjvcpb" ;
+
 include "./includes/head.php";
 include "./includes/body.php";
 include "./includes/header.php";
 include "./includes/bibleDataHelper.php";
 
-$bibleJSON = new BibleJSONData();
 function buildFormContent($organisedData) {
     $jsonData = json_encode($organisedData[0]);
     $versions = $organisedData[1];
@@ -61,9 +64,17 @@ CONTENT;
     return $content;
 }
 
-function buildAppContent($version, $bibleJSONObject, $book="genesis", $chapter="2") {
-    $data = getBibleChapterData($version, $book, $chapter);
-    storeBibleChapterData($data, $bibleJSONObject);
+function buildAppContent($versionId, $book="genesis", $chapter="2") {
+    if (getCachedChapter($versionId, $book, $chapter)) {
+        $data = getCachedChapter($versionId, $book, $chapter);
+    } else {
+        $data = getBibleChapterData($versionId, $book, $chapter);
+        echo print_r($data);
+        var_dump(json_encode($data));
+        if ($data) {
+            putCachedChapter($versionId, $book, $chapter, json_encode($data));
+        }
+    }
 //    echo print_r($data);
     $content = "<div id='bible-container'>";
     foreach ($data["data"] as $verseData) {
@@ -92,17 +103,17 @@ function displayContent($content) {
     echo getBody($content);
 }
 
-function main ($bibleJSONObject) {
+function main () {
     if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $data = getBibleConfigData();
         $organisedData = organiseConfigData($data);
         $content = buildFormContent($organisedData);
     } else {
         $content = getHeader();
-        $content .= buildAppContent($_POST["bible-version"], $bibleJSONObject);
+        $content .= buildAppContent($_POST["bible-version"]);
     }
     displayContent($content);
 }
 
-main($bibleJSON);
+main();
 ?>
