@@ -89,9 +89,4 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("resize", syncBibleOffsetWithHeader);
 
     listenForNavDropdownClick();
-
-    const navButtonForms = document.getElementsByClassName("nav-button-form");
-    navButtonForms.addEventListener("submit", () => {
-        listenForNavDropdownClick();
-    })
 })
