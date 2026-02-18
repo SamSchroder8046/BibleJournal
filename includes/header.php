@@ -6,7 +6,7 @@ function getHeader($chaptersData){
     foreach ($chaptersData as $chapterData) {
         if ($counter === 0) {
             $tableContent .= "<tr>";
-        } else if ($counter % 5 === 0 || count($chaptersData) === array_search($chapterData, $chaptersData) + 1) {
+        } else if ($counter % 6 === 0 || count($chaptersData) === array_search($chapterData, $chaptersData)) {
             $tableContent .= "</tr>";
             $counter = 0;
         } else {
@@ -14,11 +14,10 @@ function getHeader($chaptersData){
             $tableContent .= <<<BUTTON
 <td>
     <form method="post">
-        <input type="submit" name="chapter$chapter-button" value="$chapter">
+        <input class="nav-button" type="submit" name="chapter$chapter-button" value="$chapter">
     </form>
 </td>
 BUTTON;
-
         }
         $counter ++;
      }
@@ -27,7 +26,7 @@ BUTTON;
             <div id="header-container">
                 <img id="nav-dropdown" src="./public/assets/images/arrow-down.svg">
                 <table id="nav-table">
-                    
+                    $tableContent
                 </table>
             </div>
         </header>
