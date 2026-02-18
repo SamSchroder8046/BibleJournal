@@ -6,7 +6,7 @@ function getHeader($chaptersData){
     foreach ($chaptersData as $chapterData) {
         if ($counter === 0) {
             $tableContent .= "<tr>";
-        } else if ($counter % 6 === 0 || count($chaptersData) === array_search($chapterData, $chaptersData)) {
+        } else if ($counter % 11 === 0 || count($chaptersData) === array_search($chapterData, $chaptersData)) {
             $tableContent .= "</tr>";
             $counter = 0;
         } else {

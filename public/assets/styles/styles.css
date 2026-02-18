@@ -91,6 +91,7 @@ body {
     height: auto;
     padding: 20px;
     margin: 5px;
+    border: 2px solid transparent;
 }
 
 #header-container img:hover {
@@ -105,4 +106,12 @@ body {
     border-radius: 50%;
     background-color: black;
     color: white;
+}
+
+#nav-table {
+    display: none;
+}
+
+#header-container.open #nav-table {
+    display: table;
 }
