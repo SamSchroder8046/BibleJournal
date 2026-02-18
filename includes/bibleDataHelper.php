@@ -119,7 +119,7 @@ function getCachedChapter($version, $book, $chapter) {
     $raw = file_get_contents($path);
     $decoded = json_decode($raw, true);
 
-    if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) { return false; }
+    if ($decoded === null && json_last_error() !== JSON_ERROR_NONE) { return false; } else { return $decoded; }
 }
 
 // writes the json data to the cache file
@@ -160,6 +160,24 @@ function getBibleChapterData($id, $book, $chapter) {
     if (!$response) { return false; }
     $data = json_decode($response, true);
     return $data;
+}
+
+function getAllBibleChaptersData($id, $book="genesis") {
+    $chapter = 1;
+    $chapterData = [];
+    $hasChapter = true;
+    while ($hasChapter) {
+        $data = getCachedChapter($id, $book, $chapter);
+        if ($data === false) { $data = getBibleChapterData($id, $book, $chapter); }
+        if ($data === false) {
+            $hasChapter = false;
+        } else {
+            putCachedChapter($id, $book, $chapter, json_encode($data));
+            $chapterData[] = $data;
+            $chapter++;
+        }
+    }
+    return $chapterData;
 }
 
 //function getBibleChapterJSON($id, $book, $chapter) {

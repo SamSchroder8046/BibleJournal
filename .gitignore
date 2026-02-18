@@ -475,3 +475,7 @@ composer.lock
 #### htaccess
 .htaccess
 .htaccess.disabled
+
+# ignore cache files
+/data/cache/*
+!/data/cache/.gitkeep

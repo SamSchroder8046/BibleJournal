@@ -64,16 +64,16 @@ CONTENT;
     return $content;
 }
 
-function buildAppContent($versionId, $book="genesis", $chapter="2") {
+function buildAppContent($versionId, $book="genesis", $chapter="1") {
     if (getCachedChapter($versionId, $book, $chapter)) {
         $data = getCachedChapter($versionId, $book, $chapter);
     } else {
         $data = getBibleChapterData($versionId, $book, $chapter);
-        echo print_r($data);
-        var_dump(json_encode($data));
+//        echo print_r($data);
+//        var_dump(json_encode($data));
         if ($data) {
             putCachedChapter($versionId, $book, $chapter, json_encode($data));
-        }
+        } else { return false; }
     }
 //    echo print_r($data);
     $content = "<div id='bible-container'>";
@@ -103,14 +103,21 @@ function displayContent($content) {
     echo getBody($content);
 }
 
+function displayChapter($chapter, $chapterData) {
+    $content = getHeader($chapterData);
+    $content .= buildAppContent($_POST["bible-version"], $chapterData[0]["book"], $chapter);
+    displayContent($content);
+}
+
 function main () {
     if ($_SERVER["REQUEST_METHOD"] === "GET") {
         $data = getBibleConfigData();
         $organisedData = organiseConfigData($data);
         $content = buildFormContent($organisedData);
     } else {
-        $content = getHeader();
-        $content .= buildAppContent($_POST["bible-version"]);
+        $versionId = $_POST["bible-version"];
+        $content = getHeader(getAllBibleChaptersData($versionId));
+        $content .= buildAppContent($versionId);
     }
     displayContent($content);
 }
