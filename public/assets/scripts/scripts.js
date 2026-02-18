@@ -2,8 +2,11 @@
 
 // hide irrelevant Bible versions when language selected
 function filterVersionRadioButtons (language = "") {
+    if (typeof bibleData === "undefined") { return; }
+
     const excludedVersionIds = ["en-US-asvbt", "en-US-emtv", "en-US-f35", "en-tcent"];
     const versionRadioContainer = document.getElementById("version-radio-container");
+    if (!versionRadioContainer) { return; }
     versionRadioContainer.innerHTML = "";
     bibleData.sort((a, b) => {
         let x = a["version"].toLowerCase();
@@ -48,7 +51,9 @@ function filterVersionRadioButtons (language = "") {
     }
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
+
     // implement filtering for bible versions by language with event listener
     const languageSelector = document.getElementById("language");
     if (languageSelector) {
@@ -60,11 +65,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // nav dropdown
-    const dropdownButton = document.getElementById("nav-dropdown");
+    const dropDownButton = document.getElementById("nav-dropdown");
     const headerContainer = document.getElementById("header-container");
-    if (dropdownButton && headerContainer) {
-        dropdownButton.addEventListener("click", () => {
+    const bibleContainer = document.getElementById("bible-container");
+
+    function syncBibleOffsetWithHeader() {
+        if (!headerContainer || !bibleContainer) { return; }
+        bibleContainer.style.paddingTop = headerContainer.offsetHeight + "px";
+    }
+
+    // sync Bible content offset with header
+    syncBibleOffsetWithHeader();
+    window.addEventListener("resize", syncBibleOffsetWithHeader);
+
+    if (dropDownButton && headerContainer) {
+        dropDownButton.addEventListener("click", () => {
             headerContainer.classList.toggle("open");
+            // change bible content offset to account for nav dropdown
+            setTimeout(syncBibleOffsetWithHeader, 0);
         });
     }
 })
