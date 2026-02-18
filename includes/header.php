@@ -9,7 +9,7 @@ function getHeader($chaptersData){
             $tableContent .= "<tr>";
             $tableContent .= <<<BUTTON
 <td>
-    <form method="post">
+    <form class="nav-button-form" method="post">
         <input class="nav-button" type="submit" name="chapter$chapter-button" value="$chapter">
     </form>
 </td>
@@ -21,7 +21,7 @@ BUTTON;
         } else {
             $tableContent .= <<<BUTTON
 <td>
-    <form method="post">
+    <form class="nav-button-form" method="post">
         <input class="nav-button" type="submit" name="chapter$chapter-button" value="$chapter">
     </form>
 </td>

@@ -74,15 +74,24 @@ document.addEventListener("DOMContentLoaded", () => {
         bibleContainer.style.paddingTop = headerContainer.offsetHeight + "px";
     }
 
+    function listenForNavDropdownClick() {
+        if (dropDownButton && headerContainer) {
+            dropDownButton.addEventListener("click", () => {
+                headerContainer.classList.toggle("open");
+                // change bible content offset to account for nav dropdown
+                setTimeout(syncBibleOffsetWithHeader, 0);
+            });
+        }
+    }
+
     // sync Bible content offset with header
     syncBibleOffsetWithHeader();
     window.addEventListener("resize", syncBibleOffsetWithHeader);
 
-    if (dropDownButton && headerContainer) {
-        dropDownButton.addEventListener("click", () => {
-            headerContainer.classList.toggle("open");
-            // change bible content offset to account for nav dropdown
-            setTimeout(syncBibleOffsetWithHeader, 0);
-        });
-    }
+    listenForNavDropdownClick();
+
+    const navButtonForms = document.getElementsByClassName("nav-button-form");
+    navButtonForms.addEventListener("submit", () => {
+        listenForNavDropdownClick();
+    })
 })

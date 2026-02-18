@@ -8,6 +8,7 @@ include "./includes/body.php";
 include "./includes/header.php";
 include "./includes/bibleDataHelper.php";
 
+$defaultVersionId = "en-US-kjvcpb";
 function buildFormContent($organisedData) {
     $jsonData = json_encode($organisedData[0]);
     $versions = $organisedData[1];
@@ -103,10 +104,11 @@ function displayContent($content) {
     echo getBody($content);
 }
 
-function displayChapter($chapter, $chapterData) {
-    $content = getHeader($chapterData);
-    $content .= buildAppContent($_POST["bible-version"], $chapterData[0]["book"], $chapter);
-    displayContent($content);
+function getChapter($id, $chapter, $chaptersData) {
+    $book = trim(strtolower($chaptersData[0]["data"][0]["book"]));
+    $content = getHeader($chaptersData);
+    $content .= buildAppContent($id, $book, $chapter);
+    return $content;
 }
 
 function main () {
@@ -115,9 +117,21 @@ function main () {
         $organisedData = organiseConfigData($data);
         $content = buildFormContent($organisedData);
     } else {
-        $versionId = $_POST["bible-version"];
-        $content = getHeader(getAllBibleChaptersData($versionId));
-        $content .= buildAppContent($versionId);
+        $content = "";
+        $versionId = $_SESSION["bible_version"];
+        $allBibleChaptersData = getAllBibleChaptersData($versionId);
+        $navButtonPressed = false;
+        foreach ($allBibleChaptersData as $chapterData) {
+            $chapter = $chapterData["data"][0]["chapter"];
+            if (isset($_POST["chapter$chapter-button"])) {
+                $content .= getChapter($versionId, $chapter, $allBibleChaptersData);
+                $navButtonPressed = true;
+            };
+        }
+        if ($navButtonPressed === false) {
+            $content .= getHeader($allBibleChaptersData);
+            $content .= buildAppContent($versionId);
+        }
     }
     displayContent($content);
 }
